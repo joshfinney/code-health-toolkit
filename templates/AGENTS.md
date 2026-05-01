@@ -52,8 +52,7 @@ Definitions:
 
 - One session should produce one coherent patch.
 - Do not run broad rewrites.
-- Do not introduce unapproved dependencies.
+- Do not introduce new dependencies without a clear reason.
 - Do not send source code, audit output, logs, or credentials to external
   services.
 - Stop and ask for review when a change could alter public behaviour.
-

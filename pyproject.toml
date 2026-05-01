@@ -5,6 +5,11 @@ description = "Deterministic code-health audit toolkit for Python repositories."
 requires-python = ">=3.10"
 readme = "README.md"
 
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+]
+
 [tool.ruff]
 line-length = 100
 target-version = "py310"
@@ -16,4 +21,3 @@ ignore = []
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
-

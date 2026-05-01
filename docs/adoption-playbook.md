@@ -1,29 +1,8 @@
-# Adoption Playbook
+# Usage Notes
 
-## 1. Create an internal toolkit repository
+## 1. Add the baseline to a repository
 
-Use a company-approved Git host.
-
-Recommended name:
-
-```text
-engineering/code-health-toolkit
-```
-
-The repository should contain generic tooling and documentation only.
-
-## 2. Clone on the work laptop
-
-Clone from the approved internal host:
-
-```bash
-git clone git@approved-host:engineering/code-health-toolkit.git
-```
-
-Do not clone from personal infrastructure onto a controlled workstation unless
-that pattern is explicitly approved.
-
-## 3. Add the baseline to a target repository
+From this repo:
 
 ```bash
 cd code-health-toolkit
@@ -39,9 +18,9 @@ git switch -c refactor/code-health-baseline
 python tools/rank_hotspots.py --audit-dir .audit --output-md .audit/hotspots.md
 ```
 
-## 4. Open the first PR
+## 2. Keep the setup commit small
 
-The first PR should add only:
+The first change in a target repo should ideally add only:
 
 - audit script
 - ranking script
@@ -49,26 +28,26 @@ The first PR should add only:
 - minimal configuration
 - `.audit/` ignore rule
 
-Do not include refactors in the baseline PR.
+Avoid mixing tooling setup with refactors. It makes review harder and blurs
+whether the tool changed behaviour.
 
-Suggested PR title:
-
-```text
-Add deterministic code-health audit baseline
-```
-
-Suggested PR summary:
+Suggested commit title:
 
 ```text
-This change adds a local deterministic code-health audit workflow. The workflow
-collects linting, typing, complexity, dependency, dead-code, duplication, test,
-and architecture evidence under .audit/ for local triage. No audit output is
-committed.
+Add code-health audit baseline
 ```
 
-## 5. Remediate in small PRs
+Suggested summary:
 
-Each follow-up PR should have one bounded target:
+```text
+Adds local scripts for collecting linting, typing, complexity, dependency,
+dead-code, duplication, test, and architecture evidence under .audit/. Audit
+output is treated as local working data.
+```
+
+## 3. Remediate in small patches
+
+Each follow-up change should have one bounded target:
 
 - one file
 - one module
@@ -78,7 +57,7 @@ Each follow-up PR should have one bounded target:
 
 Avoid broad "cleanup" PRs.
 
-## 6. Convert lessons into checks
+## 4. Convert repeated lessons into checks
 
 When the same issue appears repeatedly, add a rule:
 
@@ -88,4 +67,3 @@ When the same issue appears repeatedly, add a rule:
 - type annotation expectation
 - docs guideline
 - CI check
-

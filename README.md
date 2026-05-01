@@ -1,43 +1,32 @@
 # Code Health Toolkit
 
-Deterministic code-health tooling for Python repositories.
+Small, deterministic code-health tooling for Python repositories.
 
-This repository is a reusable engineering-quality baseline. It provides local
-audit scripts, ranking logic, project templates, and operating guidance for
-small, test-backed remediation work.
+This is a personal toolkit for turning routine maintenance signals into a
+small, reviewable backlog. It runs common Python quality tools, stores their
+output under `.audit/`, and ranks files that look worth inspecting first.
 
-## Positioning
-
-This is not an autonomous rewrite system. It is not a place for company source
-code, production logs, customer data, credentials, or proprietary architecture
-notes.
-
-The operating model is:
-
-```text
-Scan deterministically
--> rank evidence
--> remediate one narrow target
--> prove behaviour with tests and checks
--> commit through normal review
--> convert repeated lessons into rules
-```
+It is intentionally boring: shell scripts, a Python ranking script, templates,
+and notes about keeping refactors narrow.
 
 ## Why this exists
 
-Fast iteration creates code-health debt: unused code, oversized modules,
-duplicated logic, weak type guarantees, low branch coverage, and unclear import
-boundaries. Those problems are best found by deterministic tools and fixed in
-small reviewed changes.
+Code-health work is easy to make vague. A repository might have unused code,
+large modules, duplicated logic, type errors, weak coverage, or import-boundary
+drift, but it is not always obvious where to start.
 
-The toolkit helps teams make quality work:
+This project tries to make that first pass more concrete:
 
-- measurable
-- repeatable
-- local-first
-- reviewable
-- compatible with normal SDLC controls
-- safe to use in restricted corporate environments
+```text
+run local checks
+-> collect audit output
+-> combine evidence by file
+-> pick one bounded target
+-> improve it with tests
+```
+
+The ranking is not meant to be authoritative. It is just a triage aid for
+finding files that deserve a closer look.
 
 ## Repository contents
 
@@ -45,7 +34,7 @@ The toolkit helps teams make quality work:
 tools/
   audit_codebase.sh       # Runs local checks and writes .audit/
   rank_hotspots.py        # Produces a ranked remediation backlog
-  prepare_target_repo.sh  # Copies approved baseline files into a project
+  prepare_target_repo.sh  # Copies the toolkit baseline into another repo
 
 templates/
   AGENTS.md                       # Assistant/coding-agent guardrails
@@ -56,28 +45,11 @@ templates/
 docs/
   adoption-playbook.md
   operating-model.md
-  security-and-compliance.md
-  work-laptop-handoff.md
   agent-refactor-prompt.md
   decision-record-template.md
 ```
 
-## Safe setup
-
-Use an approved internal Git host if this will be cloned onto a work laptop.
-Examples include GitHub Enterprise, GitLab, Bitbucket, or Azure DevOps if those
-are approved by your organisation.
-
-Recommended internal repository name:
-
-```text
-engineering/code-health-toolkit
-```
-
-Avoid storing this in a personal public GitHub account for work use. Keep the
-repo generic and free of company code.
-
-## Adopt in a target repository
+## Quick start
 
 From this toolkit repo:
 
@@ -94,16 +66,16 @@ python tools/rank_hotspots.py --audit-dir .audit --output-md .audit/hotspots.md
 git status
 ```
 
-Open a baseline PR that adds the audit workflow and guidance only. Do not mix
-tooling setup with refactoring.
+Open `.audit/hotspots.md` and pick one small target. The audit output is local
+working data and should normally stay out of commits.
 
-## Tooling expectations
+## Tools it can use
 
-The audit script never installs packages automatically. It uses tools already
-available in the target environment. This avoids unexpected network access and
-keeps adoption compatible with controlled workstations.
+The audit script does not install packages automatically. It uses tools already
+available in the environment so that it is predictable when run against an
+existing project.
 
-Suggested project-level development tools:
+Useful tools to install in the target project:
 
 ```text
 ruff
@@ -120,18 +92,18 @@ pip-audit
 jscpd
 ```
 
-## Governance rules
+Checks that are not available will either fail into `.audit/status.tsv` or be
+skipped when the script can detect that cleanly.
 
-- Use company-approved repositories and package sources on work devices.
-- Do not move proprietary source code to personal machines or personal repos.
-- Do not upload `.audit/` output outside approved systems.
-- Do not add unapproved MCP servers or external automation services.
-- Do not run blind overnight remediation loops.
-- Do not use this toolkit to bypass policy, monitoring, approval, or review.
+## Development
 
-The professional story is simple: this is a deterministic engineering-quality
-toolkit for local audit evidence and normal code review.
+Run the test suite with the dev extra installed:
 
-Before publishing or cloning this onto a controlled work device, read
-`docs/work-laptop-handoff.md`.
+```bash
+python -m pip install -e ".[dev]"
+python -m pytest
+```
 
+The tests focus on the ranking script because that is where the repo-specific
+logic lives. The shell scripts are deliberately thin wrappers around existing
+tools.

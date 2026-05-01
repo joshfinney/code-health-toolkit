@@ -1,33 +1,31 @@
-# Security and Data Handling
+# Security
 
 ## Scope
 
-This repository should contain generic tooling only. It should not contain:
+This repository should contain generic tooling only. Please do not commit:
 
-- company source code
-- customer, trade, market, or portfolio data
-- logs from production or controlled environments
+- source code from another project
+- application logs or exported audit reports
 - credentials, tokens, certificates, cookies, or SSH keys
-- internal system names that are not already approved for the destination repo
-- exported audit reports from proprietary repositories
+- private system names or URLs
 
 ## Local-first behaviour
 
 The scripts in this repository are designed to run locally and write output
-under `.audit/` in the target repository. They do not install dependencies and
-do not intentionally send data to external services.
+under `.audit/` in the target repository. They do not install dependencies or
+intentionally send project data to external services.
 
-Some tools invoked by the audit script may access networks if configured by the
-target environment. Review local policy and tool configuration before enabling
-checks such as dependency vulnerability auditing.
+Some invoked tools may perform network access depending on their own
+configuration. Review those tools before enabling checks such as dependency
+vulnerability auditing.
 
-## Corporate use
+## Audit output
 
-For work use, host this toolkit in an approved internal Git system. Do not clone
-from personal infrastructure onto controlled workstations unless your company
-policy explicitly allows that pattern.
+Audit reports can contain file paths, symbols, dependency names, and error
+messages. Keep `.audit/` out of version control unless you have deliberately
+reviewed the contents.
 
 ## Reporting issues
 
-Report security issues through the owning team's approved internal process.
-
+Please open a private issue or contact the repository owner if you find a
+security problem in the toolkit itself.
